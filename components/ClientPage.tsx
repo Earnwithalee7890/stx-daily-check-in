@@ -134,6 +134,46 @@ export default function ClientPage() {
         }
     };
 
+    const handleEarnBadge = async () => {
+        if (!userAddress) {
+            setMessage('❌ Please connect wallet first');
+            return;
+        }
+
+        setLoading(true);
+        setMessage('');
+
+        try {
+            const { openContractCall } = await import('@stacks/connect');
+            const { AnchorMode, PostConditionMode } = await import('@stacks/transactions');
+
+            // TODO: Replace with your actual deployed contract address
+            const BADGE_CONTRACT_ADDRESS = 'SP2F500B8DTRK1EANJQ054BRAB8DDKN6QCMXGNFBT';
+            const BADGE_CONTRACT_NAME = 'weekly-badges';
+
+            await openContractCall({
+                contractAddress: BADGE_CONTRACT_ADDRESS,
+                contractName: BADGE_CONTRACT_NAME,
+                functionName: 'earn-badge',
+                functionArgs: [],
+                network,
+                anchorMode: AnchorMode.Any,
+                postConditionMode: PostConditionMode.Allow,
+                onFinish: (data) => {
+                    setMessage(`✅ Badge earned! Fee: 0.01 STX | TX: ${data.txId}`);
+                    setLoading(false);
+                },
+                onCancel: () => {
+                    setMessage('❌ Transaction cancelled');
+                    setLoading(false);
+                },
+            });
+        } catch (error) {
+            setMessage(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="container">
             <header style={{ textAlign: 'center', marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -396,6 +436,14 @@ export default function ClientPage() {
                                         style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
                                     >
                                         {loading ? <span className="loading"></span> : '🎁'} Claim 0.1 STX Reward (One-Time Bonus!)
+                                    </button>
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={handleEarnBadge}
+                                        disabled={loading}
+                                        style={{ background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)' }}
+                                    >
+                                        {loading ? <span className="loading"></span> : '🏅'} Earn Daily Badge (0.01 STX)
                                     </button>
                                 </div>
                                 {message && (
