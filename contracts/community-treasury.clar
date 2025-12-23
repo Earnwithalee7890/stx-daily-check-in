@@ -56,7 +56,7 @@
             votes-for: u0,
             votes-against: u0,
             executed: false,
-            expires-at: (+ block-height u144) ;; ~24 hours
+            expires-at: (+ stacks-block-height u144) ;; ~24 hours
         })
         (var-set proposal-nonce (+ proposal-id u1))
         (ok proposal-id)
@@ -71,7 +71,7 @@
         )
         (asserts! (default-to false (map-get? signers tx-sender)) ERR_NOT_AUTHORIZED)
         (asserts! (is-none existing-vote) ERR_ALREADY_VOTED)
-        (asserts! (< block-height (get expires-at proposal)) ERR_PROPOSAL_EXPIRED)
+        (asserts! (< stacks-block-height (get expires-at proposal)) ERR_PROPOSAL_EXPIRED)
         
         (map-set votes {proposal-id: proposal-id, voter: tx-sender} {vote: vote-for})
         

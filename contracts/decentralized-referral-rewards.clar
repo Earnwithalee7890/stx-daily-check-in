@@ -50,7 +50,7 @@
             referrer: referrer,
             referral-count: u0,
             total-earned: u0,
-            joined-at: block-height,
+            joined-at: stacks-block-height,
             tier: u1
         })
         

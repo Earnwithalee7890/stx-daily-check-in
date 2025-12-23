@@ -74,7 +74,7 @@
         (asserts! (get active badge) ERR_NOT_AUTHORIZED)
         
         (map-set user-badges {user: user, badge-id: badge-id} {
-            earned-at: block-height,
+            earned-at: stacks-block-height,
             progress: u100
         })
         

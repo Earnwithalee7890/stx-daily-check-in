@@ -36,9 +36,9 @@
         
         (map-set stakes tx-sender {
             amount: amount,
-            staked-at: block-height,
+            staked-at: stacks-block-height,
             lock-period: lock-period,
-            last-claim: block-height
+            last-claim: stacks-block-height
         })
         
         (var-set total-staked (+ (var-get total-staked) amount))
@@ -50,7 +50,7 @@
     (let
         (
             (stake-info (unwrap! (map-get? stakes user) ERR_NO_STAKE))
-            (blocks-staked (- block-height (get last-claim stake-info)))
+            (blocks-staked (- stacks-block-height (get last-claim stake-info)))
             (base-reward (/ (* (get amount stake-info) REWARD_RATE) u10000))
             (time-reward (/ (* base-reward blocks-staked) u144))
             ;; Bonus for longer lock periods
@@ -73,7 +73,7 @@
         
         (try! (as-contract (stx-transfer? rewards tx-sender tx-sender)))
         
-        (map-set stakes tx-sender (merge stake-info {last-claim: block-height}))
+        (map-set stakes tx-sender (merge stake-info {last-claim: stacks-block-height}))
         (var-set reward-pool (- (var-get reward-pool) rewards))
         (ok rewards)
     )
@@ -85,7 +85,7 @@
             (stake-info (unwrap! (map-get? stakes tx-sender) ERR_NO_STAKE))
             (unlock-height (+ (get staked-at stake-info) (get lock-period stake-info)))
         )
-        (asserts! (>= block-height unlock-height) ERR_LOCK_NOT_EXPIRED)
+        (asserts! (>= stacks-block-height unlock-height) ERR_LOCK_NOT_EXPIRED)
         
         ;; Claim any pending rewards first
         (try! (claim-rewards))
