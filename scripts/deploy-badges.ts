@@ -1,7 +1,8 @@
 import { makeContractDeploy, broadcastTransaction, AnchorMode } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
+import { STACKS_MAINNET } from '@stacks/network';
 import * as fs from 'fs';
 import * as path from 'path';
+
 
 // Your wallet's private key (KEEP THIS SECRET!)
 const PRIVATE_KEY = 'YOUR_PRIVATE_KEY_HERE';
@@ -18,7 +19,7 @@ async function deployBadgesContract() {
         console.log(`📝 Contract size: ${contractSource.length} characters\n`);
 
         // Configure network
-        const network = new StacksMainnet();
+        const network = STACKS_MAINNET;
 
         // Create deployment transaction
         const txOptions = {
